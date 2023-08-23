@@ -3,12 +3,14 @@ package controllers
 import (
 	"bankDemo/interfaces"
 	"bankDemo/models"
+	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type BankController struct{
@@ -97,4 +99,31 @@ func (t *BankController)CreateManyBankid(ctx *gin.Context){
         ctx.JSON(http.StatusBadGateway, gin.H{"status": "fail", "message": err.Error()})
     }
     ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": res})
+}
+
+func (t*BankController)GetallCustomer(ctx *gin.Context){
+    var orders []bson.M
+    new,_:=t.BankService.GetallCustomer()
+    if err := new.All(context.Background(), &orders); err != nil {
+        ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+        log.Println("Error:", err)
+        return
+    }
+    ctx.JSON(http.StatusOK, orders)
+
+}
+func (t*BankController)GetCustomerbyid(ctx *gin.Context){
+    var orders []bson.M
+    id:= ctx.Param("id")
+	id1,err := strconv.ParseInt(id,10,64)
+    if(err!=nil){
+        ctx.JSON(http.StatusBadGateway, gin.H{"status": "fail", "message": err.Error()})
+    }
+    new,err:=t.BankService.GetCustomerbyid(id1)
+    if err := new.All(context.Background(), &orders); err != nil {
+        ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+        log.Println("Error:", err)
+        return
+    }
+    ctx.JSON(http.StatusOK, orders)
 }

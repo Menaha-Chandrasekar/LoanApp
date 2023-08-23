@@ -5,10 +5,10 @@ import (
 	"bankDemo/models"
 	"fmt"
 	"net/http"
-	
+	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	
 )
 
 type AccountController struct{
@@ -39,7 +39,7 @@ func (t *AccountController)CreateAccount(ctx *gin.Context){
 
 func (t *AccountController)GetAccountById(ctx *gin.Context){
     id:= ctx.Param("id")
-    id1,err := primitive.ObjectIDFromHex(id)
+    id1,err := strconv.ParseInt(id,10,64)
     if(err!=nil){
         ctx.JSON(http.StatusBadGateway, gin.H{"status": "fail", "message": err.Error()})
     }
@@ -58,7 +58,7 @@ func (t *AccountController)UpdateAccountById(ctx *gin.Context){
         ctx.JSON(http.StatusBadRequest, err.Error())
         return
     }
-    id1,err := primitive.ObjectIDFromHex(id)
+    id1,err := strconv.ParseInt(id,10,64)
     if(err!=nil){
         ctx.JSON(http.StatusBadGateway, gin.H{"status": "fail", "message": err.Error()})
     }
@@ -71,7 +71,7 @@ func (t *AccountController)UpdateAccountById(ctx *gin.Context){
 
 func (t *AccountController)DeleteAccountById(ctx *gin.Context){
     id:= ctx.Param("id")
-    id1,err := primitive.ObjectIDFromHex(id)
+    id1,err := strconv.ParseInt(id,10,64)
     if(err!=nil){
         ctx.JSON(http.StatusBadGateway, gin.H{"status": "fail", "message": err.Error()})
     }

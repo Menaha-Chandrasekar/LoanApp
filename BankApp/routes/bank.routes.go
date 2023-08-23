@@ -12,4 +12,6 @@ func BankRoute(router *gin.Engine, controller controllers.BankController) {
 	router.PUT("/api/banks/update/:id", controller.UpdateBankid)
 	router.DELETE("/api/banks/delete/:id", controller.DeleteBankid)
 	router.POST("/api/banks/createMany", controller.CreateManyBankid)
+	router.GET("/api/banks/getall", controller.GetallCustomer)
+	router.GET("/api/banks/getbyid/:id", controller.GetCustomerbyid)
 }

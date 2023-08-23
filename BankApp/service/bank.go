@@ -44,6 +44,67 @@ func(c *Bank) CreateBankid(user *models.Bank)(*mongo.InsertOneResult,error){
 	return res,nil
 }
 
+func (c*Bank) GetallCustomer()(*mongo.Cursor,error){
+	pipeline := mongo.Pipeline{
+        {
+            {Key: "$lookup", Value: bson.D{
+                {Key: "from", Value: "customer"},
+                {Key: "localField", Value: "bank_id"},
+                {Key: "foreignField", Value: "bank_id"},
+                {Key: "as", Value: "new_bank_id"},
+            }},
+        },
+        {
+            {Key: "$unwind", Value: "$new_bank_id"},
+        },
+        {
+            {Key: "$project", Value: bson.D{  
+				{Key: "new_bank_id.customer_id", Value: 1},
+                {Key: "new_bank_id.name", Value: 1},
+				{Key: "new_bank_id.account_id", Value: 1},
+            }},
+        },
+    }
+    
+    // Perform aggregation
+    res, err := c.mongoCollection.Aggregate(c.ctx, pipeline)
+    if err != nil {
+        log.Fatal(err)
+	}
+	return res,nil
+}
+func (c*Bank) GetCustomerbyid(id int64)(*mongo.Cursor,error){
+	pipeline := mongo.Pipeline{
+        {
+            {Key: "$lookup", Value: bson.D{
+                {Key: "from", Value: "customer"},
+                {Key: "localField", Value: "bank_id"},
+                {Key: "foreignField", Value: "bank_id"},
+                {Key: "as", Value: "new_bank_id"},
+            }},
+        },
+        {
+            {Key: "$unwind", Value: "$new_bank_id"},
+        },
+		{
+			{Key: "$match",Value: bson.D{{Key: "bank_id",Value:12345 }}},
+		},
+        {
+            {Key: "$project", Value: bson.D{  
+				{Key: "new_bank_id.customer_id", Value: 1},
+                {Key: "new_bank_id.name", Value: 1},
+				{Key: "new_bank_id.account_id", Value: 1},
+            }},
+        },
+    }
+    
+    // Perform aggregation
+    res, err := c.mongoCollection.Aggregate(c.ctx, pipeline)
+    if err != nil {
+        log.Fatal(err)
+	}
+	return res,nil
+}
 
 func(c *Bank) GetBankid(id int64) (*models.Bank, error) {
 	filter := bson.D{{Key: "bank_id", Value: id}}
@@ -77,11 +138,9 @@ func (c *Bank) DeleteBankid(id int64) (*mongo.DeleteResult, error){
 
 func (c *Bank) CreateManyBankid(post []*models.Bank)(*mongo.InsertManyResult,error){
 	var users []interface{}
-	// for _,user := range post{
-	// 	user.Bank_ID = primitive.NewObjectID()
-		
-	// 	users = append(users, user)
-	// }
+	for _,user := range post{		
+		users = append(users, user)
+	}
 	res,err := c.mongoCollection.InsertMany(c.ctx, users)
 	// fmt.Println(user)
 	if err!=nil{

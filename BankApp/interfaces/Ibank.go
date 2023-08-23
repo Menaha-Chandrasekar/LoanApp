@@ -12,4 +12,6 @@ type IBank interface{
 	GetBankid(int64) (*models.Bank, error)
 	UpdateBankid(int64, *models.Bank) (*mongo.UpdateResult, error)
 	DeleteBankid(int64) (*mongo.DeleteResult, error)
+	GetallCustomer()(*mongo.Cursor,error)
+	GetCustomerbyid(int64)(*mongo.Cursor,error)
 }

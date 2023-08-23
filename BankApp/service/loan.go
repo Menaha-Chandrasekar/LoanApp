@@ -4,9 +4,9 @@ import (
 	"bankDemo/interfaces"
 	"bankDemo/models"
 	"context"
+	"fmt"
 
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -28,8 +28,8 @@ func (c* Loan)CreateLoan(user *models.Loan)(*mongo.InsertOneResult,error){
 	 return res, nil
 }
 
-func (c *Loan)GetLoanById(id primitive.ObjectID)([]*models.Loan,error){
-	match:=bson.D{{Key:"amount",Value: id}}
+func (c *Loan)GetLoanById(id int64)([]*models.Loan,error){
+	match:=bson.D{{Key:"_id",Value: id}}
 	result,err:=c.mongoCollection.Find(c.ctx,match)
 	if err!=nil{
 		return nil, err
@@ -47,22 +47,37 @@ func (c *Loan)GetLoanById(id primitive.ObjectID)([]*models.Loan,error){
 	}
 }
 
-func (c *Loan) UpdateLoanById(id primitive.ObjectID, loan *models.Loan) (*mongo.UpdateResult, error){
-	update:=bson.M{"amount":id}
-	updated:=bson.M{"$Set":&loan}
-	result,err:=c.mongoCollection.UpdateOne(c.ctx,update,updated)
+func (c *Loan) UpdateLoanById(id int64, loan *models.Loan) (*mongo.UpdateResult, error){
+	iv := bson.M{"_id": id}
+	fv := bson.M{"$set": &loan}
+	res,err := c.mongoCollection.UpdateOne(c.ctx, iv, fv)
 	if err!=nil{
-		
 		return nil,err
 	}
-	return result,nil
+	return res,nil
 }
 
-func (c *Loan) DeleteLoanById(id primitive.ObjectID) (*mongo.DeleteResult, error){	
-	del := bson.M{"amount": id}
+func (c *Loan) DeleteLoanById(id int64) (*mongo.DeleteResult, error){	
+	del := bson.M{"_id": id}
     res,err:=c.mongoCollection.DeleteOne(c.ctx,del)
 	if err!=nil{
 		return nil,err
 	}
 	return res, nil
+}
+func (c *Loan) CreateManyLoan(post []*models.Loan)(*mongo.InsertManyResult,error){
+	
+		var users []interface{}
+		for _,user := range post{
+			users = append(users, user)
+		}
+		res,err := c.mongoCollection.InsertMany(c.ctx, users)
+		// fmt.Println(user)
+		if err!=nil{
+			fmt.Println("error in service")
+			return nil,err
+		}
+		return res,nil
+	
+	
 }

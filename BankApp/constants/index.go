@@ -1,5 +1,5 @@
 package constants
 
 
-const ConnectionString="mongodb://localhost:27017/?retryWrites=true&connectTimeoutMS=10000"
+const ConnectionString="mongodb+srv://menahac:swetha718@cluster0.i4gz54i.mongodb.net/?retryWrites=true&w=majority"
 const Port=":6000"
