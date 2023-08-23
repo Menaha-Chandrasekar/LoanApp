@@ -127,3 +127,7 @@ func (t*BankController)GetCustomerbyid(ctx *gin.Context){
     }
     ctx.JSON(http.StatusOK, orders)
 }
+func (a *BankController)GetBank(ctx *gin.Context){
+	accounts,_:=a.BankService.GetBank()
+	ctx.JSON(http.StatusOK,accounts)
+}

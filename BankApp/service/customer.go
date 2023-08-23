@@ -94,3 +94,4 @@ func (c *Cust) CreateManyCustomer(post []*models.Customer)(*mongo.InsertManyResu
 	}
 	return res,nil
 }
+

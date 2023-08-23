@@ -14,4 +14,5 @@ func BankRoute(router *gin.Engine, controller controllers.BankController) {
 	router.POST("/api/banks/createMany", controller.CreateManyBankid)
 	router.GET("/api/banks/getall", controller.GetallCustomer)
 	router.GET("/api/banks/getbyid/:id", controller.GetCustomerbyid)
+	router.GET("/api/banks/getbank", controller.GetBank)
 }

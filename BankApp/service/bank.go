@@ -73,6 +73,21 @@ func (c*Bank) GetallCustomer()(*mongo.Cursor,error){
 	}
 	return res,nil
 }
+func(a *Bank)GetBank()([]*models.Bank,error){
+	filter:=bson.D{}
+	options:=options.Find()
+	res,_:=a.mongoCollection.Find(a.ctx,filter,options)
+	var bank[]*models.Bank
+	for res.Next(a.ctx){
+		acc:=&models.Bank{}
+		err:=res.Decode(acc)
+		if err!=nil{
+			return nil,err
+		}
+		bank=append(bank, acc)
+	}
+	return bank,nil
+}
 func (c*Bank) GetCustomerbyid(id int64)(*mongo.Cursor,error){
 	pipeline := mongo.Pipeline{
         {
