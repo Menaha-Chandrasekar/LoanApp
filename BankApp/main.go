@@ -40,7 +40,20 @@ func initloan(mongoClient *mongo.Client){
 	profileController := controllers.InitLoanController(profileService)
 	routes.LoanRoute(server,profileController)
 }
-
+func InitAccount(mongoClient *mongo.Client){
+	ctx = context.TODO()
+	profileCollection := mongoClient.Database("banking").Collection("Account")
+	profileService := service.InitAccount(profileCollection, ctx)
+	profileController := controllers.InitAccountController(profileService)
+	routes.AccountRoute(server,profileController)
+}
+func InitBank(mongoClient *mongo.Client){
+	ctx = context.TODO()
+	profileCollection := mongoClient.Database("banking").Collection("Bank")
+	profileService := service.InitBank(profileCollection, ctx)
+	profileController := controllers.InitBankController(profileService)
+	routes.BankRoute(server,profileController)
+}
 
 
 
@@ -54,6 +67,8 @@ func main(){
 	initRoutes()
 	initApp(mongoclient)
 	initloan(mongoclient)
+	InitAccount(mongoclient)
+	InitBank(mongoclient)
 	fmt.Println("server running on port",constants.Port)
 	log.Fatal(server.Run(constants.Port))
 }
